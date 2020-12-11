@@ -20,7 +20,9 @@ open System.ComponentModel.DataAnnotations.Schema
 
 open Microsoft.EntityFrameworkCore
 
-open FSharp.Control.Tasks.Builders
+// open FSharp.Control.Tasks.Builders
+
+open FSharp.Control.Tasks
 
 open Giraffe
 
@@ -687,28 +689,24 @@ let edit_handler (id : int) : HttpHandler =
 
 let post_edit_handler (id : int) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-                
-        let movie = {
-            Id = (int (ctx.Request.Form.Item("Id").ToString()))
-            Title = ctx.Request.Form.Item("Title").ToString()
-            ReleaseDate = DateTime.Parse(ctx.Request.Form.Item("ReleaseDate").ToString())
-            Genre = ctx.Request.Form.Item("Genre").ToString()
-            Price = (decimal (ctx.Request.Form.Item("Price").ToString()))
-            Rating = ctx.Request.Form.Item("Rating").ToString()
+
+        task {
+            let! movie = ctx.BindFormAsync<Movie>()
+
+            if id <> movie.Id then
+                return! RequestErrors.NOT_FOUND movie next ctx
+            else
+                let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+
+                try
+                    context.Update(movie) |> ignore
+                    context.SaveChanges() |> ignore
+
+                    return! Successful.OK movie next ctx
+                with
+                    | :? DbUpdateConcurrencyException as ex ->
+                    return! RequestErrors.NOT_FOUND movie next ctx
         }
-
-        if id <> movie.Id then
-            htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "edit - not found")  next ctx
-        else
-            let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
-
-            try
-                context.Update(movie) |> ignore
-                context.SaveChanges() |> ignore
-                htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "edit - ok")  next ctx
-            with
-                | :? DbUpdateConcurrencyException as ex ->
-                failwith "edit - issue"
 
 let delete_handler (id : int) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->

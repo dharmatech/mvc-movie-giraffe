@@ -1,0 +1,12 @@
+{
+    "conventions": {
+        "naming": {
+            "publicValuesNames": {
+                "enabled": true,
+                "config": {
+                    "underscores": "AllowAny"
+                }
+            }
+        }
+    }
+}

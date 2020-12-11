@@ -300,22 +300,11 @@ module Views =
                     form [ _action "/Movies/Create"; _method "post" ] [
 
                         div [ _class "form-group" ] [
+                            
                             label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
-
-                            input [ 
-                                _class "form-control"
-                                _type "text"
-                                attr "data-val" "true" 
-                                attr "data-val-length" "The field Title must be a string with a minimum length of 3 and a maximum length of 60."
-                                attr "data-val-length-max" "60" 
-                                attr "data-val-length-min" "3" 
-                                attr "data-val-required" "The Title field is required."
-                                _id "Title"
-                                _maxlength "60"
-                                _name "Title"
-                                _value ""
-                            ]
-
+                                                        
+                            TagHelpers.input typedefof<Movie> "Title" "" "Title" [ _class "form-control" ]
+                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Title"

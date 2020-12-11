@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="TagHelpers.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

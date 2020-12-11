@@ -20,6 +20,8 @@ open System.ComponentModel.DataAnnotations.Schema
 
 open Microsoft.EntityFrameworkCore
 
+open FSharp.Control.Tasks.Builders
+
 open Giraffe
 
 // ---------------------------------
@@ -658,23 +660,18 @@ let create_handler : HttpHandler =
 
 let post_create_handler : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        
-        let movie = {
-            Id = 0
-            Title = ctx.Request.Form.Item("Title").ToString()
-            ReleaseDate = DateTime.Parse(ctx.Request.Form.Item("ReleaseDate").ToString())
-            Genre = ctx.Request.Form.Item("Genre").ToString()
-            Price = (decimal (ctx.Request.Form.Item("Price").ToString()))
-            Rating = ctx.Request.Form.Item("Rating").ToString()
+
+        task {
+            let! movie = ctx.BindFormAsync<Movie>()
+
+            let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+            
+            context.Add(movie) |> ignore
+            context.SaveChanges() |> ignore
+
+            return! Successful.OK movie next ctx
         }
-
-        let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
         
-        context.Add(movie) |> ignore
-        context.SaveChanges() |> ignore
-
-        htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "post - ok")  next ctx
-
 let edit_handler (id : int) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
 

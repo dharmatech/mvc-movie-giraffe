@@ -349,22 +349,6 @@ module Views =
 
                             TagHelpers.input typedefof<Movie> "Price" "" [ _class "form-control" ]
 
-                            input [ 
-                                _class "form-control"
-                                _type "text"
-                                attr "data-val" "true" 
-                                attr "data-val-number" "The field Price must be a number."
-                                attr "data-val-range" "The field Price must be between 1 and 100."
-                                attr "data-val-range-max" "100"
-                                attr "data-val-range-min" "1"
-
-                                attr "data-val-required" "The Price field is required."
-
-                                _id "Price"
-                                _name "Price"
-                                _value ""
-                            ]
-
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Price"
@@ -375,23 +359,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
 
-                            input [ 
-                                _class "form-control"
-                                _type "text"
-                                attr "data-val" "true" 
-
-                                attr "data-val-length" "The field Rating must be a string with a maximum length of 5." 
-                                attr "data-val-length-max" "5" 
-                                attr "data-val-regex" "The field Rating must match the regular expression ^[A-Z]+[a-zA-Z0-9-]*$." 
-                                attr "data-val-regex-pattern" "^[A-Z]&#x2B;[a-zA-Z0-9-]*$"
-                                
-                                attr "data-val-required" "The Rating field is required."
-
-                                _id "Rating"
-                                _maxlength "5"
-                                _name "Rating"
-                                _value ""
-                            ]
+                            TagHelpers.input typedefof<Movie> "Rating" "" [ _class "form-control" ]
 
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -429,14 +397,7 @@ module Views =
                 div [ _class "col-md-4" ] [
                     form [ _action ("/Movies/Edit/" + (string model.Id)); _method "post" ] [
 
-                        input [ 
-                            _type "hidden"
-                            attr "data-val" "true"
-                            attr "data-val-required" "The Id field is required."
-                            _id "Id"
-                            _name "Id"
-                            _value (string model.Id)
-                        ]
+                        TagHelpers.input typedefof<Movie> "Id" (string model.Id) [ _type "hidden" ]
 
                         // div [ _class "form-group" ] [
                         //     label [ _class "control-label"; _for "Title" ] [ encodedText "Title"]
@@ -638,6 +599,10 @@ let details_handler (id : int) : HttpHandler =
 let create_handler : HttpHandler =
     fun  (next : HttpFunc) (ctx : HttpContext) ->
 
+        // let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+
+        // Console.WriteLine(antiforgery.GetAndStoreTokens(ctx))
+
         let view = Views.create 
 
         htmlView view next ctx
@@ -772,6 +737,9 @@ let configureApp (app : IApplicationBuilder) =
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore
     services.AddGiraffe() |> ignore
+
+    services.AddAntiforgery() |> ignore
+
     services.AddDbContext<MvcMovieContext>(fun options ->
             // options.UseSqlite(Configuration.GetConnectionString("MvcMovieContext"))
             // options.UseSqlite("Data Source=MvcMovie.db") |> ignore

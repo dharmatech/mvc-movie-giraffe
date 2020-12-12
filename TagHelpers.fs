@@ -6,12 +6,39 @@ open System.ComponentModel.DataAnnotations
 
 open Giraffe.ViewEngine
 
-// let input (type_obj : System.Type) (property_name : string) (value_str : string) (name_str : string) (attrs_a : XmlAttribute list) =
+// TagHelpers.input typedefof<Movie> "Title" "" "hidden" [ _class "form-control" ]
+
+// TagHelpers.input [ _class "form-control" ] typedefof<Movie> "Title" "" "hidden" 
 
 let input (type_obj : System.Type) (property_name : string) (value_str : string) (attrs_a : XmlAttribute list) =
 
-    let mutable type_value = ""
+    // System.Console.WriteLine([ 
+    //     10
+    //     if false then 
+    //       40 
+    //     50 ])
 
+    // System.Console.WriteLine([ _class "abc"; _type "bcd" ].Select(fun elt -> 
+    //     elt))
+
+    // for xml_attr in [ _class "abc"; _type "bcd"; _disabled ] do
+
+    //     match xml_attr with
+    //     | KeyValue (attr_key, attr_val) -> System.Console.WriteLine(attr_key + " " + attr_val)
+    //     | Boolean str -> System.Console.WriteLine(str)
+
+    // let result = [ _class "abc"; _type "bcd"; _disabled ].Any(fun xml_attr ->
+    //     match xml_attr with
+    //     | KeyValue (attr_key, attr_val) -> attr_key = "type"
+    //     | Boolean str -> false)
+
+    // let result = [ _class "abc" ].Any(fun xml_attr ->
+    //     match xml_attr with
+    //     | KeyValue (attr_key, attr_val) -> attr_key = "type"
+    //     | Boolean str -> false)
+
+    // System.Console.WriteLine(result)
+    
     let mutable ls : XmlAttribute list = []
 
     let properties = type_obj.GetProperties()
@@ -27,39 +54,58 @@ let input (type_obj : System.Type) (property_name : string) (value_str : string)
         if (not (isNull cattr)) then
             display_name <- cattr.Name
 
-    // System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
+    System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
 
-    if (property_info.PropertyType.Name = "Int64") then
-        type_value <- "number"
-    elif (property_info.PropertyType.Name = "DateTime") then
-        type_value <- "datetime-local"
+    let mutable type_value = ""
+
+    let type_attribute_provided = attrs_a.Any(fun xml_attr ->
+        match xml_attr with
+        | KeyValue (attr_key, attr_val) -> attr_key = "type"
+        | Boolean str -> false)
+
+    if not type_attribute_provided then
+        if (property_info.PropertyType.Name = "Int64") then
+            type_value <- "number"
+        elif (property_info.PropertyType.Name = "DateTime") then
+            type_value <- "datetime-local"
+        elif (property_info.PropertyType.Name = "String") then        
+            type_value <- "text"
+        elif (property_info.PropertyType.Name = "Decimal") then
+            type_value <- "text"
+        else
+            type_value <- "text"        
+
+    if (property_info.PropertyType.Name = "Int32") then
         ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-    elif (property_info.PropertyType.Name = "String") then        
-        type_value <- "text"
+    if (property_info.PropertyType.Name = "DateTime") then
+        ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
     elif (property_info.PropertyType.Name = "Decimal") then
-        type_value <- "text"
         ls <- ls @ [ attr "data-val-number" (sprintf "The field %s must be a number." display_name) ]
         ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-    else
-        type_value <- "text"
-
+    
     let _ =
 
         let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DataTypeAttribute>) :?> DataTypeAttribute
 
         if (not (isNull cattr)) then
             if (cattr.DataType = DataType.Date) then
-                type_value <- "date"
+                if not type_attribute_provided then
+                    type_value <- "date"
   
     let _ =
 
         let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<StringLengthAttribute>) :?> StringLengthAttribute
 
         if (not (isNull cattr)) then
-            ls <- ls @ [ attr "data-val-length" (sprintf "The field %s must be a string with a minimum length of %i and a maximum length of %i." property_name cattr.MinimumLength cattr.MaximumLength) ]
-            ls <- ls @ [ attr "data-val-length-max" (string cattr.MaximumLength) ]
-            ls <- ls @ [ attr "data-val-length-min" (string cattr.MinimumLength) ]
-            ls <- ls @ [ attr "maxlength" (string cattr.MaximumLength) ]
+            if (cattr.MinimumLength > 0) then
+                ls <- ls @ [ attr "data-val-length" (sprintf "The field %s must be a string with a minimum length of %i and a maximum length of %i." property_name cattr.MinimumLength cattr.MaximumLength) ]
+                ls <- ls @ [ attr "data-val-length-max" (string cattr.MaximumLength) ]
+                ls <- ls @ [ attr "data-val-length-min" (string cattr.MinimumLength) ]
+                ls <- ls @ [ attr "maxlength" (string cattr.MaximumLength) ]                        
+            else 
+                ls <- ls @ [ attr "data-val-length" (sprintf "The field %s must be a string with a maximum length of %i." property_name cattr.MaximumLength) ]
+                ls <- ls @ [ attr "data-val-length-max" (string cattr.MaximumLength) ]
+                ls <- ls @ [ attr "maxlength" (string cattr.MaximumLength) ]        
 
     let _ =
 
@@ -90,7 +136,8 @@ let input (type_obj : System.Type) (property_name : string) (value_str : string)
 
     let attrs_b = 
         [
-            _type type_value
+            if not type_attribute_provided then
+                _type type_value
             attr "data-val" "true"
         ] 
 

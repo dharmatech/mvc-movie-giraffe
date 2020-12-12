@@ -311,7 +311,7 @@ module Views =
                             
                             label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
                                                         
-                            TagHelpers.input typedefof<Movie> "Title" "" "Title" [ _class "form-control" ]
+                            TagHelpers.input typedefof<Movie> "Title" "" [ _class "form-control" ]
                             
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -323,7 +323,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
 
-                            TagHelpers.input typedefof<Movie> "ReleaseDate" "" "ReleaseDate" [ _class "form-control" ]
+                            TagHelpers.input typedefof<Movie> "ReleaseDate" "" [ _class "form-control" ]
 
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -335,7 +335,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
 
-                            TagHelpers.input typedefof<Movie> "Genre" "" "Genre" [ _class "form-control" ]
+                            TagHelpers.input typedefof<Movie> "Genre" "" [ _class "form-control" ]
 
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -346,6 +346,8 @@ module Views =
 
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
+
+                            TagHelpers.input typedefof<Movie> "Price" "" [ _class "form-control" ]
 
                             input [ 
                                 _class "form-control"

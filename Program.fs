@@ -503,16 +503,12 @@ module Views =
                 )
 
                 form [ _action ("/Movies/Delete/" + (string model.Id)); _method "post" ] [
-                    input [ 
-                        _type "hidden"
-                        attr "data-val" "true" 
-                        attr "data-val-required" "The Id field is required." 
-                        _id "Id"
-                        _name "Id"
-                        _value (string model.Id)
-                    ]
+
+                    TagHelpers.input typedefof<Movie> "Id" (string model.Id) [ _type "hidden" ]
 
                     input [ _type "submit"; _value "Delete"; _class "btn btn-danger" ]
+
+                    encodedText " | "
 
                     a [ _href "/Movies" ] [ encodedText "Back to List" ]
 

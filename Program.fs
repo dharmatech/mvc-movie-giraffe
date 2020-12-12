@@ -48,7 +48,7 @@ type Movie =
         Genre : string
 
         [<Range(1, 100)>]
-        // [<DataType(DataType.Currency)>]
+        [<DataType(DataType.Currency)>]
         [<Column(TypeName = "decimal(18, 2)")>]
         Price : decimal
 
@@ -140,7 +140,7 @@ module DataContextInitialize =
 module Views =
     open Giraffe.ViewEngine
 
-    let layout (title_data: string) (content: XmlNode list) =
+    let layout (title_data: string) (scripts : XmlNode list) (content: XmlNode list) =
         html [] [
             head [] [
                 title []  [ 
@@ -150,7 +150,7 @@ module Views =
                 link [ _rel "stylesheet"; _type "text/css"; _href "/lib/bootstrap/css/bootstrap.min.css" ]
                 link [ _rel "stylesheet"; _type "text/css"; _href "/main.css" ]
             ]
-            body [] [ 
+            body [] ([ 
                 header [] [
                     nav [ _class "navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" ] [
                         div [ _class "container" ] [
@@ -188,11 +188,19 @@ module Views =
 
                 script [ _src "/lib/jquery/jquery.min.js" ] []
                 script [ _src "/lib/bootstrap/js/bootstrap.bundle.min.js" ] [] 
-            ]
+            ] @ scripts)
         ]
 
     let partial () =
         h1 [] [ encodedText "MvcMovieGiraffe" ]
+
+    let validation_scripts_partial =
+        [
+            // script [ _src "/lib/jquery-validation/dist/jquery.validate.min.js" ] []
+            script [ _src "/lib/jquery-validate/jquery.validate.min.js" ] []
+            // script [ _src "/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" ] []
+            script [ _src "/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" ] []
+        ]
 
     let movies (model : MovieGenreViewModel) =
         [
@@ -247,7 +255,7 @@ module Views =
                         ]
                     ])))
             ]
-        ] |> layout "Index"
+        ] |> layout "Index" []
     
     let details (model : Movie) = 
         [
@@ -285,7 +293,7 @@ module Views =
 
                 a [ _href "/Movies" ] [ encodedText "Back to list" ]
             ]
-        ] |> layout "Details"
+        ] |> layout "Details" []
 
     let create =
         [
@@ -315,15 +323,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
 
-                            input [ 
-                                _class "form-control"
-                                _type "date"
-                                attr "data-val" "true" 
-                                attr "data-val-required" "The Release Date field is required."
-                                _id "ReleaseDate"
-                                _name "ReleaseDate"
-                                _value ""
-                            ]
+                            TagHelpers.input typedefof<Movie> "ReleaseDate" "" "ReleaseDate" [ _class "form-control" ]
 
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -335,16 +335,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
 
-                            input [ 
-                                _class "form-control"
-                                _type "text"
-                                attr "data-val" "true" 
-                                attr "data-val-regex" "The field Genre must match the regular expression ^[A-Z]+[a-zA-Z]*$"
-                                attr "data-val-required" "The Genre field is required."
-                                _id "Genre"
-                                _name "Genre"
-                                _value ""
-                            ]
+                            TagHelpers.input typedefof<Movie> "Genre" "" "Genre" [ _class "form-control" ]
 
                             span [ 
                                 _class "text-danger field-validation-valid" 
@@ -422,7 +413,7 @@ module Views =
         
             div [ _href "/Movies" ] [ encodedText "Back to List" ]
 
-        ] |> layout "Create"
+        ] |> layout "Create" validation_scripts_partial
 
     let edit (model : Movie) =
         [
@@ -526,7 +517,7 @@ module Views =
             div [] [
                 a [ _href "/Movies" ] [ encodedText "Back to List" ]
             ]
-        ] |> layout "Edit"
+        ] |> layout "Edit" []
 
     let delete (model : Movie) = 
         [
@@ -574,7 +565,7 @@ module Views =
                     input [ _name "__RequestVerificationToken"; _type "hidden"; _value "..." ]
                 ]
             ]
-        ] |> layout "Delete"
+        ] |> layout "Delete" []
 
 // ---------------------------------
 // Web app
@@ -645,7 +636,7 @@ let details_handler (id : int) : HttpHandler =
 let create_handler : HttpHandler =
     fun  (next : HttpFunc) (ctx : HttpContext) ->
 
-        let view = Views.create
+        let view = Views.create 
 
         htmlView view next ctx
 

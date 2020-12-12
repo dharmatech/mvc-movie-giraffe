@@ -11,33 +11,6 @@ open Giraffe.ViewEngine
 // TagHelpers.input [ _class "form-control" ] typedefof<Movie> "Title" "" "hidden" 
 
 let input (type_obj : System.Type) (property_name : string) (value_str : string) (attrs_a : XmlAttribute list) =
-
-    // System.Console.WriteLine([ 
-    //     10
-    //     if false then 
-    //       40 
-    //     50 ])
-
-    // System.Console.WriteLine([ _class "abc"; _type "bcd" ].Select(fun elt -> 
-    //     elt))
-
-    // for xml_attr in [ _class "abc"; _type "bcd"; _disabled ] do
-
-    //     match xml_attr with
-    //     | KeyValue (attr_key, attr_val) -> System.Console.WriteLine(attr_key + " " + attr_val)
-    //     | Boolean str -> System.Console.WriteLine(str)
-
-    // let result = [ _class "abc"; _type "bcd"; _disabled ].Any(fun xml_attr ->
-    //     match xml_attr with
-    //     | KeyValue (attr_key, attr_val) -> attr_key = "type"
-    //     | Boolean str -> false)
-
-    // let result = [ _class "abc" ].Any(fun xml_attr ->
-    //     match xml_attr with
-    //     | KeyValue (attr_key, attr_val) -> attr_key = "type"
-    //     | Boolean str -> false)
-
-    // System.Console.WriteLine(result)
     
     let mutable ls : XmlAttribute list = []
 
@@ -125,8 +98,7 @@ let input (type_obj : System.Type) (property_name : string) (value_str : string)
             ls <- ls @ [ attr "data-val-range" (sprintf "The field %s must be between %s and %s." property_name (string cattr.Minimum) (string cattr.Maximum)) ]
             ls <- ls @ [ attr "data-val-range-max" (string cattr.Maximum) ]
             ls <- ls @ [ attr "data-val-range-min" (string cattr.Minimum) ]        
-            
-
+    
     let _ =
 
         let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RequiredAttribute>) :?> RequiredAttribute

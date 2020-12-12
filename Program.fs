@@ -398,75 +398,66 @@ module Views =
                     form [ _action ("/Movies/Edit/" + (string model.Id)); _method "post" ] [
 
                         TagHelpers.input typedefof<Movie> "Id" (string model.Id) [ _type "hidden" ]
+ 
+                        div [ _class "form-group" ] [
+                            label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
 
-                        // div [ _class "form-group" ] [
-                        //     label [ _class "control-label"; _for "Title" ] [ encodedText "Title"]
-                        //     input [
-                        //         _class "form-control"
-                        //         _type "text"
-                        //         attr "data-val" "true"
-                        //         attr "data-val-length" "The field Title must be a string with a minimum length of 3 and a maximum length of 60."
-                        //         attr "data-val-length-max" "60" 
-                        //         attr "data-val-length-min" "3" 
-                        //         attr "data-val-required" "The Title field is required." 
-                        //         _id "Title"
-                        //         _maxlength "60" 
-                        //         _name "Title"
-                        //         _value model.Title
-                        //     ]
-                        //     span [
-                        //         _class "text-danger field-validation-valid"
-                        //         attr "data-valmsg-for" "Title"
-                        //         attr "data-valmsg-replace" "true"
-                        //     ] []
-                        // ]                        
+                            TagHelpers.input typedefof<Movie> "Title" model.Title [ _class "form-control" ]
 
-                        let form_group (name : string) (type_name : string) (value_str : string) (input_attrs : XmlAttribute list) =
-                            div [ _class "form-group" ] [
-
-                                label [ _class "control-label"; _for name ] [ encodedText name ]
-
-                                let input_attrs_1 = [
-                                    _class "form-control"; 
-                                    _type type_name
-                                    attr "data-val" "true"
-                                ]
-
-                                let input_attrs_2 = [
-                                    attr "data-val-required" (sprintf "The %s field is required." name)
-                                    _id name
-                                    _name name
-                                    _value value_str
-                                ]
-
-                                input (input_attrs_1 @ input_attrs @ input_attrs_2)
-                                
-                                span [ 
-                                    _class "text-danger field-validation-valid"
-                                    attr "data-valmsg-for" name
-                                    attr "data-valmsg-replace" "true"                                    
-                                ] []
-                            ]
-
-                        form_group "Title" "text" model.Title [
-                            attr "data-val-length" "The field Title must be a string with a minimum length of 3 and a maximum length of 60."
-                            attr "data-val-length-max" "60" 
-                            attr "data-val-length-min" "3"
-                            _maxlength "60"
+                            span [ 
+                                _class "text-danger field-validation-valid"
+                                attr "data-valmsg-for" "Title"
+                                attr "data-valmsg-replace" "true"                                    
+                            ] []
                         ]
 
-                        // form_group "Release Date" "date" (string model.ReleaseDate) []
+                        div [ _class "form-group" ] [
+                            label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
 
-                        form_group "ReleaseDate" "date" (model.ReleaseDate.ToString "yyyy-MM-dd") []
+                            TagHelpers.input typedefof<Movie> "ReleaseDate" (model.ReleaseDate.ToString "yyyy-MM-dd") [ _class "form-control" ]
 
-                        form_group "Genre" "text" model.Genre [
-                            attr "data-val-regex" "The field Genre must match the regular expression ^[A-Z]+[a-zA-Z]*$."
-                            attr "data-val-regex-pattern" "^[A-Z]+[a-zA-Z]*$"
+                            span [ 
+                                _class "text-danger field-validation-valid"
+                                attr "data-valmsg-for" "ReleaseDate"
+                                attr "data-valmsg-replace" "true"                                    
+                            ] []
+                        ]                        
+
+                        div [ _class "form-group" ] [
+                            label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
+
+                            TagHelpers.input typedefof<Movie> "Genre" model.Genre [ _class "form-control" ]
+
+                            span [ 
+                                _class "text-danger field-validation-valid"
+                                attr "data-valmsg-for" "Genre"
+                                attr "data-valmsg-replace" "Genre"                                    
+                            ] []
+                        ]                        
+
+                        div [ _class "form-group" ] [
+                            label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
+
+                            TagHelpers.input typedefof<Movie> "Price" (string model.Price) [ _class "form-control" ]
+
+                            span [ 
+                                _class "text-danger field-validation-valid"
+                                attr "data-valmsg-for" "Price"
+                                attr "data-valmsg-replace" "true"                                    
+                            ] []
                         ]
 
-                        form_group "Price" "text" (string model.Price) [ ]
+                        div [ _class "form-group" ] [
+                            label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
 
-                        form_group "Rating" "text" model.Rating [ ]
+                            TagHelpers.input typedefof<Movie> "Rating" model.Rating [ _class "form-control" ]
+
+                            span [ 
+                                _class "text-danger field-validation-valid"
+                                attr "data-valmsg-for" "Rating"
+                                attr "data-valmsg-replace" "true"                                    
+                            ] []
+                        ]
 
                         div [ _class "form-group" ] [
                             input [ _type "submit"; _value "Save"; _class "btn btn-primary" ]

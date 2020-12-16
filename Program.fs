@@ -181,7 +181,7 @@ module Views =
                 footer [ _class "border-top footer text-muted" ] [
                     div [ _class "container" ] [
                         rawText "&copy; "
-                        encodedText "2020 - WebApplicationCs - "
+                        encodedText "2020 - MvcMovieGiraffe - "
                         a [ _href "/Home/Privacy" ] [ encodedText "Privacy" ]
                     ]
                 ]
@@ -196,9 +196,7 @@ module Views =
 
     let validation_scripts_partial =
         [
-            // script [ _src "/lib/jquery-validation/dist/jquery.validate.min.js" ] []
             script [ _src "/lib/jquery-validate/jquery.validate.min.js" ] []
-            // script [ _src "/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" ] []
             script [ _src "/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" ] []
         ]
 
@@ -309,10 +307,10 @@ module Views =
 
                         div [ _class "form-group" ] [
                             
-                            label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
+                            label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]                            
+
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Title, [ _class "form-control" ])
                                                         
-                            TagHelpers.input typedefof<Movie> "Title" "" [ _class "form-control" ]
-                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Title"
@@ -323,8 +321,8 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
 
-                            TagHelpers.input typedefof<Movie> "ReleaseDate" "" [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "ReleaseDate"
@@ -335,8 +333,8 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
 
-                            TagHelpers.input typedefof<Movie> "Genre" "" [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Genre, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Genre"
@@ -347,8 +345,8 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
 
-                            TagHelpers.input typedefof<Movie> "Price" "" [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Price, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Price"
@@ -359,8 +357,8 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
 
-                            TagHelpers.input typedefof<Movie> "Rating" "" [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Rating, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid" 
                                 attr "data-valmsg-for" "Rating"
@@ -397,13 +395,13 @@ module Views =
                 div [ _class "col-md-4" ] [
                     form [ _action ("/Movies/Edit/" + (string model.Id)); _method "post" ] [
 
-                        TagHelpers.input typedefof<Movie> "Id" (string model.Id) [ _type "hidden" ]
- 
+                        TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
+                         
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
 
-                            TagHelpers.input typedefof<Movie> "Title" model.Title [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(model.Title, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid"
                                 attr "data-valmsg-for" "Title"
@@ -414,7 +412,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
 
-                            TagHelpers.input typedefof<Movie> "ReleaseDate" (model.ReleaseDate.ToString "yyyy-MM-dd") [ _class "form-control" ]
+                            TagHelpers.Input.Of(model.ReleaseDate, [ _class "form-control" ])
 
                             span [ 
                                 _class "text-danger field-validation-valid"
@@ -426,8 +424,8 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
 
-                            TagHelpers.input typedefof<Movie> "Genre" model.Genre [ _class "form-control" ]
-
+                            TagHelpers.Input.Of(model.Genre, [ _class "form-control" ])
+                            
                             span [ 
                                 _class "text-danger field-validation-valid"
                                 attr "data-valmsg-for" "Genre"
@@ -438,7 +436,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
 
-                            TagHelpers.input typedefof<Movie> "Price" (string model.Price) [ _class "form-control" ]
+                            TagHelpers.Input.Of(model.Price, [ _class "form-control" ])
 
                             span [ 
                                 _class "text-danger field-validation-valid"
@@ -450,7 +448,7 @@ module Views =
                         div [ _class "form-group" ] [
                             label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
 
-                            TagHelpers.input typedefof<Movie> "Rating" model.Rating [ _class "form-control" ]
+                            TagHelpers.Input.Of(model.Rating, [ _class "form-control" ])
 
                             span [ 
                                 _class "text-danger field-validation-valid"
@@ -482,12 +480,7 @@ module Views =
             div [] [
                 h4 [] [ encodedText "Movie" ]
                 hr []
-
-                // dl [ _class "row" ] [
-                //     // dt [ _class "col-sm-2" ] [ encodedText "Title" ]
-                //     // dd [ _class "col-sm-10" ] [ encodedText model.Title ]                    
-                // ]
-
+                
                 let entry (label_str : string) (value_str : string) =
                     [
                         dt [ _class "col-sm-2" ] [ encodedText label_str ]
@@ -504,8 +497,8 @@ module Views =
 
                 form [ _action ("/Movies/Delete/" + (string model.Id)); _method "post" ] [
 
-                    TagHelpers.input typedefof<Movie> "Id" (string model.Id) [ _type "hidden" ]
-
+                    TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
+                    
                     input [ _type "submit"; _value "Delete"; _class "btn btn-danger" ]
 
                     encodedText " | "
@@ -671,6 +664,17 @@ let post_delete_handler (id : int) : HttpHandler =
         htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "delete - ok")  next ctx
        
 let webApp =
+
+    let example_movie =
+        {
+            Id = 123
+            Title = "Abc"
+            ReleaseDate = DateTime.Now
+            Genre = "Xyz"
+            Price = 1.23M
+            Rating = "G"
+        }
+
     choose [
         GET >=>
             choose [

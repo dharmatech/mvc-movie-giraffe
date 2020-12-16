@@ -22,3 +22,7 @@ dotnet watch run
 Then go to:
 
     http://localhost:5000/Movies
+
+# Thanks
+
+Chet Husk [demonstrated](https://github.com/giraffe-fsharp/Giraffe/discussions/457#discussioncomment-206261) a very nice expression-based approach to tag-helpers.

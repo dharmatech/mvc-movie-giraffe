@@ -145,7 +145,7 @@ type Input =
                         )
 
                 ]                                 
-            
+
             input (attrs_a @ attrs_b @ ls @ attrs_d)
             
         | _ -> encodedText ""
@@ -219,5 +219,5 @@ type Label =
             // System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
 
             label (attrs_a @ [ _for property_info.Name ]) [ encodedText display_name ]
-            
-        | _ -> encodedText ""
+        
+        | _ -> failwith "tag helper issue"

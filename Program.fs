@@ -374,46 +374,22 @@ module Views =
                     form [ _action ("/Movies/Edit/" + (string model.Id)); _method "post" ] [
 
                         TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
-                         
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(model.Title, [ _class "control-label" ])
 
-                            TagHelpers.Input.Of(model.Title, [ _class "form-control" ])
+                        let form_group (expr : FSharp.Quotations.Expr<'a>) =
+                            div [ _class "form-group" ] 
+                                [
+                                    TagHelpers.Label.Of(%expr, [ _class "control-label" ])
 
-                            TagHelpers.SpanValidation.Of(model.Title, [ _class "text-danger" ])
-                        ]
+                                    TagHelpers.Input.Of(%expr, [ _class "form-control" ])
 
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(model.ReleaseDate, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(model.ReleaseDate, [ _class "form-control" ])
+                                    TagHelpers.SpanValidation.Of(%expr, [ _class "text-danger" ])
+                                ]
 
-                            TagHelpers.SpanValidation.Of(model.ReleaseDate, [ _class "text-danger" ])
-                        ]                        
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(model.Genre, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(model.Genre, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(model.Genre, [ _class "text-danger" ])
-                        ]                        
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(model.Price, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(model.Price, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(model.Price, [ _class "text-danger" ])
-                        ]
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(model.Rating, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(model.Rating, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(model.Rating, [ _class "text-danger" ])
-                        ]
+                        form_group <@ model.Title @>
+                        form_group <@ model.ReleaseDate @>
+                        form_group <@ model.Genre @>
+                        form_group <@ model.Price @>
+                        form_group <@ model.Rating @>
 
                         div [ _class "form-group" ] [
                             input [ _type "submit"; _value "Save"; _class "btn btn-primary" ]

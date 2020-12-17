@@ -189,10 +189,7 @@ module Views =
                 script [ _src "/lib/bootstrap/js/bootstrap.bundle.min.js" ] [] 
             ] @ scripts)
         ]
-
-    let partial () =
-        h1 [] [ encodedText "MvcMovieGiraffe" ]
-
+    
     let validation_scripts_partial =
         [
             script [ _src "/lib/jquery-validate/jquery.validate.min.js" ] []
@@ -265,22 +262,20 @@ module Views =
 
                 hr []
 
-                dl [ _class "row" ] [
-                    dt [ _class "col-sm-2" ] [ encodedText "Title" ]
-                    dd [ _class "col-sm-10"] [ encodedText model.Title ]
+                dl [ _class "row" ] (
 
-                    dt [ _class "col-sm-2" ] [ encodedText "ReleaseDate" ]
-                    dd [ _class "col-sm-10"] [ encodedText (string model.ReleaseDate) ]
+                    let entry (label_str : string) (value_str : string) =
+                        [
+                            dt [ _class "col-sm-2" ] [ encodedText label_str ]
+                            dd [ _class "col-sm-10" ] [ encodedText value_str ]
+                        ]                                
 
-                    dt [ _class "col-sm-2" ] [ encodedText "Genre" ]
-                    dd [ _class "col-sm-10"] [ encodedText model.Genre ]
-
-                    dt [ _class "col-sm-2" ] [ encodedText "Price" ]
-                    dd [ _class "col-sm-10"] [ encodedText (string model.Price) ]
-
-                    dt [ _class "col-sm-2" ] [ encodedText "Rating" ]
-                    dd [ _class "col-sm-10"] [ encodedText model.Rating ]
-                ]
+                    (entry "Title" model.Title) @ 
+                    (entry "Release Date" (string model.ReleaseDate)) @
+                    (entry "Genre" model.Genre) @
+                    (entry "Price" (string model.Price)) @
+                    (entry "Rating" model.Rating)
+                )
             ]
 
             div [] [
@@ -391,13 +386,14 @@ module Views =
                 h4 [] [ encodedText "Movie" ]
                 hr []
                 
-                let entry (label_str : string) (value_str : string) =
-                    [
-                        dt [ _class "col-sm-2" ] [ encodedText label_str ]
-                        dd [ _class "col-sm-10" ] [ encodedText value_str ]
-                    ]                                
-
                 dl [ _class "row" ] (
+                    
+                    let entry (label_str : string) (value_str : string) =
+                        [
+                            dt [ _class "col-sm-2" ] [ encodedText label_str ]
+                            dd [ _class "col-sm-10" ] [ encodedText value_str ]
+                        ]
+
                     (entry "Title" model.Title) @ 
                     (entry "Release Date" (string model.ReleaseDate)) @
                     (entry "Genre" model.Genre) @

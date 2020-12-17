@@ -304,45 +304,21 @@ module Views =
                 div [ _class "col-md-4" ] [
                     form [ _action "/Movies/Create"; _method "post" ] [
 
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Title, [ _class "control-label" ])
-                                                        
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Title, [ _class "form-control" ])
+                        let form_group (expr : FSharp.Quotations.Expr<'a>) =
+                            div [ _class "form-group" ] 
+                                [
+                                    TagHelpers.Label.Of(%expr, [ _class "control-label" ])
 
-                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Title, [ _class "text-danger" ])
-                        ]
+                                    TagHelpers.Input.Of(%expr, [ _class "form-control" ])
 
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "form-control" ])
+                                    TagHelpers.SpanValidation.Of(%expr, [ _class "text-danger" ])
+                                ]
 
-                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "text-danger" ])
-                        ]
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Genre, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Genre, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Genre, [ _class "text-danger" ])
-                        ]
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Price, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Price, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Price, [ _class "text-danger" ])
-                        ]
-
-                        div [ _class "form-group" ] [
-                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Rating, [ _class "control-label" ])
-                            
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Rating, [ _class "form-control" ])
-
-                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Rating, [ _class "text-danger" ])
-                        ]
+                        form_group <@ Unchecked.defaultof<Movie>.Title @>
+                        form_group <@ Unchecked.defaultof<Movie>.ReleaseDate @>
+                        form_group <@ Unchecked.defaultof<Movie>.Genre @>
+                        form_group <@ Unchecked.defaultof<Movie>.Price @>
+                        form_group <@ Unchecked.defaultof<Movie>.Rating @>
 
                         div [ _class "form-group" ] [
                             input [ _type "submit"; _value "Create"; _class "btn btn-primary" ]

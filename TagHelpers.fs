@@ -132,14 +132,96 @@ type Input =
                         _type type_value
                     attr "data-val" "true"
                 ] 
-
+            
             let attrs_d = 
                 [
                     _id property_name
                     _name property_name
-                    _value (string current_value)
+                    _value
+                        (
+                            if type_value = "date" then
+                                if (isNull current_value) then
+                                    ""
+                                else
+                                    (current_value :?> System.DateTime).ToString "yyyy-MM-dd"
+                            else
+                                (string current_value)
+                        )
+
                 ]                                 
             
             input (attrs_a @ attrs_b @ ls @ attrs_d)
+            
+        | _ -> encodedText ""
+
+// ----------------------------------------------------------------------
+
+
+[<RequireQualifiedAccess>]
+type SpanValidation =
+    static member Of([<ReflectedDefinition>] expr: Expr<'a>, attrs_a: XmlAttribute list) =
+        match expr with
+        | PropInfo(property_info, get_current_value) ->
+
+            let attrs_d =
+
+                let has_class =
+                    attrs_a.Any(fun xml_attr ->
+                        match xml_attr with
+                        | KeyValue (attr_key, attr_val) ->
+                            if attr_key = "class" then
+                                true
+                            else
+                                false
+                        | Boolean str -> false
+                    )
+
+                if has_class then
+                    attrs_a
+                else
+                    attrs_a @ [ _class "" ]
+
+
+            let attrs_b = 
+                attrs_d.Select(fun xml_attr -> 
+                    match xml_attr with
+                    | KeyValue (attr_key, attr_val) ->
+                        if attr_key = "class" then
+                            KeyValue (attr_key, attr_val + " field-validation-valid")
+                        else
+                            xml_attr
+                    | Boolean str -> xml_attr
+                )
+            
+            let attrs_c =
+                [
+                    attr "data-valmsg-for" property_info.Name
+                    attr "data-valmsg-replace" "true"
+                ]
+
+            span ((List.ofSeq attrs_b) @ attrs_c) []
+            
+        | _ -> encodedText ""
+
+// ----------------------------------------------------------------------
+
+[<RequireQualifiedAccess>]
+type Label =
+    static member Of([<ReflectedDefinition>] expr: Expr<'a>, attrs_a: XmlAttribute list) =
+        match expr with
+        | PropInfo(property_info, _) ->
+                        
+            let mutable display_name = property_info.Name
+
+            let _ =
+
+                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DisplayAttribute>) :?> DisplayAttribute
+
+                if (not (isNull cattr)) then
+                    display_name <- cattr.Name
+
+            // System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
+
+            label (attrs_a @ [ _for property_info.Name ]) [ encodedText display_name ]
             
         | _ -> encodedText ""

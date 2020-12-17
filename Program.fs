@@ -101,7 +101,6 @@ module DataContextInitialize =
                 Price = 8.99M
                 Rating = "R"
             },
-
             
             {
                 Id = 0
@@ -154,7 +153,7 @@ module Views =
                 header [] [
                     nav [ _class "navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" ] [
                         div [ _class "container" ] [
-                            a [ _class "navbar-brand"; _href "/" ] [ encodedText "MvcMovieGiraffe" ]
+                            a [ _class "navbar-brand"; _href "/Movies" ] [ encodedText "MvcMovieGiraffe" ]
                             button [ 
                                 _class "navbar-toggler"
                                 _type "button"
@@ -306,64 +305,43 @@ module Views =
                     form [ _action "/Movies/Create"; _method "post" ] [
 
                         div [ _class "form-group" ] [
-                            
-                            label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]                            
-
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Title, [ _class "form-control" ])
+                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Title, [ _class "control-label" ])
                                                         
-                            span [ 
-                                _class "text-danger field-validation-valid" 
-                                attr "data-valmsg-for" "Title"
-                                attr "data-valmsg-replace" "true"
-                            ] []
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Title, [ _class "form-control" ])
+
+                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Title, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
-
+                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "form-control" ])
-                            
-                            span [ 
-                                _class "text-danger field-validation-valid" 
-                                attr "data-valmsg-for" "ReleaseDate"
-                                attr "data-valmsg-replace" "true"
-                            ] []
+
+                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.ReleaseDate, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
-
+                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Genre, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Genre, [ _class "form-control" ])
-                            
-                            span [ 
-                                _class "text-danger field-validation-valid" 
-                                attr "data-valmsg-for" "Genre"
-                                attr "data-valmsg-replace" "true"
-                            ] []
+
+                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Genre, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
-
+                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Price, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Price, [ _class "form-control" ])
-                            
-                            span [ 
-                                _class "text-danger field-validation-valid" 
-                                attr "data-valmsg-for" "Price"
-                                attr "data-valmsg-replace" "true"
-                            ] []
+
+                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Price, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
-
-                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Rating, [ _class "form-control" ])
+                            TagHelpers.Label.Of(Unchecked.defaultof<Movie>.Rating, [ _class "control-label" ])
                             
-                            span [ 
-                                _class "text-danger field-validation-valid" 
-                                attr "data-valmsg-for" "Rating"
-                                attr "data-valmsg-replace" "true"
-                            ] []
+                            TagHelpers.Input.Of(Unchecked.defaultof<Movie>.Rating, [ _class "form-control" ])
+
+                            TagHelpers.SpanValidation.Of(Unchecked.defaultof<Movie>.Rating, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
@@ -379,7 +357,7 @@ module Views =
                 ]
             ]
         
-            div [ _href "/Movies" ] [ encodedText "Back to List" ]
+            div [] [ a [ _href "/Movies" ] [ encodedText "Back to List" ] ]
 
         ] |> layout "Create" validation_scripts_partial
 
@@ -398,63 +376,43 @@ module Views =
                         TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
                          
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Title" ] [ encodedText "Title" ]
+                            TagHelpers.Label.Of(model.Title, [ _class "control-label" ])
 
                             TagHelpers.Input.Of(model.Title, [ _class "form-control" ])
-                            
-                            span [ 
-                                _class "text-danger field-validation-valid"
-                                attr "data-valmsg-for" "Title"
-                                attr "data-valmsg-replace" "true"                                    
-                            ] []
+
+                            TagHelpers.SpanValidation.Of(model.Title, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "ReleaseDate" ] [ encodedText "ReleaseDate" ]
-
+                            TagHelpers.Label.Of(model.ReleaseDate, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(model.ReleaseDate, [ _class "form-control" ])
 
-                            span [ 
-                                _class "text-danger field-validation-valid"
-                                attr "data-valmsg-for" "ReleaseDate"
-                                attr "data-valmsg-replace" "true"                                    
-                            ] []
+                            TagHelpers.SpanValidation.Of(model.ReleaseDate, [ _class "text-danger" ])
                         ]                        
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Genre" ] [ encodedText "Genre" ]
-
-                            TagHelpers.Input.Of(model.Genre, [ _class "form-control" ])
+                            TagHelpers.Label.Of(model.Genre, [ _class "control-label" ])
                             
-                            span [ 
-                                _class "text-danger field-validation-valid"
-                                attr "data-valmsg-for" "Genre"
-                                attr "data-valmsg-replace" "Genre"                                    
-                            ] []
+                            TagHelpers.Input.Of(model.Genre, [ _class "form-control" ])
+
+                            TagHelpers.SpanValidation.Of(model.Genre, [ _class "text-danger" ])
                         ]                        
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Price" ] [ encodedText "Price" ]
-
+                            TagHelpers.Label.Of(model.Price, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(model.Price, [ _class "form-control" ])
 
-                            span [ 
-                                _class "text-danger field-validation-valid"
-                                attr "data-valmsg-for" "Price"
-                                attr "data-valmsg-replace" "true"                                    
-                            ] []
+                            TagHelpers.SpanValidation.Of(model.Price, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
-                            label [ _class "control-label"; _for "Rating" ] [ encodedText "Rating" ]
-
+                            TagHelpers.Label.Of(model.Rating, [ _class "control-label" ])
+                            
                             TagHelpers.Input.Of(model.Rating, [ _class "form-control" ])
 
-                            span [ 
-                                _class "text-danger field-validation-valid"
-                                attr "data-valmsg-for" "Rating"
-                                attr "data-valmsg-replace" "true"                                    
-                            ] []
+                            TagHelpers.SpanValidation.Of(model.Rating, [ _class "text-danger" ])
                         ]
 
                         div [ _class "form-group" ] [
@@ -469,7 +427,7 @@ module Views =
             div [] [
                 a [ _href "/Movies" ] [ encodedText "Back to List" ]
             ]
-        ] |> layout "Edit" []
+        ] |> layout "Edit" validation_scripts_partial
 
     let delete (model : Movie) = 
         [

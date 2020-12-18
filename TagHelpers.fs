@@ -44,26 +44,27 @@ type Input =
                     property_info.Name
 
             // System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
-
-            let mutable type_value = ""
-
+            
             let type_attribute_provided = attrs_a.Any(fun xml_attr ->
                 match xml_attr with
                 | KeyValue (attr_key, attr_val) -> attr_key = "type"
                 | Boolean str -> false)
 
-            if not type_attribute_provided then
-                if (property_info.PropertyType.Name = "Int64") then
-                    type_value <- "number"
-                elif (property_info.PropertyType.Name = "DateTime") then
-                    type_value <- "datetime-local"
-                elif (property_info.PropertyType.Name = "String") then        
-                    type_value <- "text"
-                elif (property_info.PropertyType.Name = "Decimal") then
-                    type_value <- "text"
-                else
-                    type_value <- "text"        
+            let type_value =
 
+                let data_type_attr = System.Attribute.GetCustomAttribute(property_info, typedefof<DataTypeAttribute>) :?> DataTypeAttribute
+
+                if not type_attribute_provided then
+                    if (not (isNull data_type_attr)) && (data_type_attr.DataType = DataType.Date) then
+                        "date"
+                    else
+                        match property_info.PropertyType.Name with
+                        | "Int64"    -> "number"
+                        | "DateTime" -> "datetime-local"
+                        | _          -> "text"
+                else
+                    "text"                
+            
             if (property_info.PropertyType.Name = "Int32") then
                 ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
             if (property_info.PropertyType.Name = "DateTime") then
@@ -71,15 +72,6 @@ type Input =
             elif (property_info.PropertyType.Name = "Decimal") then
                 ls <- ls @ [ attr "data-val-number" (sprintf "The field %s must be a number." display_name) ]
                 ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-            
-            let _ =
-
-                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DataTypeAttribute>) :?> DataTypeAttribute
-
-                if (not (isNull cattr)) then
-                    if (cattr.DataType = DataType.Date) then
-                        if not type_attribute_provided then
-                            type_value <- "date"
           
             let _ =
 

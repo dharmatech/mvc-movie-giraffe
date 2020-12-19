@@ -287,7 +287,7 @@ module Views =
             ]
         ] |> layout "Details" []
 
-    let create =
+    let create (request_token : string) =
         [
             h1 [] [ encodedText "Create" ]
 
@@ -322,7 +322,7 @@ module Views =
                         input [ 
                             _name "__RequestVerificationToken"
                             _type "hidden"
-                            _value "..."
+                            _value request_token
                         ]
                     ]
                 ]
@@ -485,26 +485,35 @@ let details_handler (id : int) : HttpHandler =
 let create_handler : HttpHandler =
     fun  (next : HttpFunc) (ctx : HttpContext) ->
 
-        // let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+        let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+        
+        let token_set = antiforgery.GetAndStoreTokens(ctx)
 
-        // Console.WriteLine(antiforgery.GetAndStoreTokens(ctx))
-
-        let view = Views.create 
+        let view = Views.create token_set.RequestToken
 
         htmlView view next ctx
 
 let post_create_handler : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
 
+        let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+                
         task {
-            let! movie = ctx.BindFormAsync<Movie>()
+            if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
 
-            let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
-            
-            context.Add(movie) |> ignore
-            context.SaveChanges() |> ignore
+                let! movie = ctx.BindFormAsync<Movie>()
 
-            return! Successful.OK movie next ctx
+                let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+                
+                context.Add(movie) |> ignore
+                context.SaveChanges() |> ignore
+                
+                return! redirectTo false "/Movies" next ctx
+                                
+            else
+                return! RequestErrors.BAD_REQUEST 10 next ctx
+
+                // return! RequestErrors.badRequest (text "abc") next ctx
         }
         
 let edit_handler (id : int) : HttpHandler =
@@ -634,7 +643,7 @@ let configureApp (app : IApplicationBuilder) =
 let configureServices (services : IServiceCollection) =
     services.AddCors()    |> ignore
     services.AddGiraffe() |> ignore
-
+    
     services.AddAntiforgery() |> ignore
 
     services.AddDbContext<MvcMovieContext>(fun options ->

@@ -31,9 +31,7 @@ type Input =
     static member Of([<ReflectedDefinition>] expr: Expr<'a>, attrs_a: XmlAttribute list) =
         match expr with
         | PropInfo(property_info, get_current_value) ->
-            
-            let mutable ls : XmlAttribute list = []
-                                    
+                                                            
             let display_name =
 
                 let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DisplayAttribute>) :?> DisplayAttribute
@@ -64,64 +62,80 @@ type Input =
                         | _          -> "text"
                 else
                     "text"                
-            
-            if (property_info.PropertyType.Name = "Int32") then
-                ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-            if (property_info.PropertyType.Name = "DateTime") then
-                ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-            elif (property_info.PropertyType.Name = "Decimal") then
-                ls <- ls @ [ attr "data-val-number" (sprintf "The field %s must be a number." display_name) ]
-                ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
-          
-            let _ =
 
-                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<StringLengthAttribute>) :?> StringLengthAttribute
-
-                if (not (isNull cattr)) then
-                    if (cattr.MinimumLength > 0) then
-                        ls <- ls @ [ attr "data-val-length" (sprintf "The field %s must be a string with a minimum length of %i and a maximum length of %i." property_info.Name cattr.MinimumLength cattr.MaximumLength) ]
-                        ls <- ls @ [ attr "data-val-length-max" (string cattr.MaximumLength) ]
-                        ls <- ls @ [ attr "data-val-length-min" (string cattr.MinimumLength) ]
-                        ls <- ls @ [ attr "maxlength" (string cattr.MaximumLength) ]                        
-                    else 
-                        ls <- ls @ [ attr "data-val-length" (sprintf "The field %s must be a string with a maximum length of %i." property_info.Name cattr.MaximumLength) ]
-                        ls <- ls @ [ attr "data-val-length-max" (string cattr.MaximumLength) ]
-                        ls <- ls @ [ attr "maxlength" (string cattr.MaximumLength) ]        
-
-            let _ =
-
-                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RegularExpressionAttribute>) :?> RegularExpressionAttribute
-
-                if (not (isNull cattr)) then
-
-                    ls <- ls @ [ attr "data-val-regex" (sprintf "The field %s must match the regular expression %s." property_info.Name cattr.Pattern) ]
-                    ls <- ls @ [ attr "data-val-regex-pattern" cattr.Pattern ]
-
-            let _ =
-
-                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RangeAttribute>) :?> RangeAttribute
-
-                if (not (isNull cattr)) then
-
-                    ls <- ls @ [ attr "data-val-range" (sprintf "The field %s must be between %s and %s." property_info.Name (string cattr.Minimum) (string cattr.Maximum)) ]
-                    ls <- ls @ [ attr "data-val-range-max" (string cattr.Maximum) ]
-                    ls <- ls @ [ attr "data-val-range-min" (string cattr.Minimum) ]        
-            
-            let _ =
-
-                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RequiredAttribute>) :?> RequiredAttribute
-
-                if (not (isNull cattr)) then
-                    ls <- ls @ [ attr "data-val-required" (sprintf "The %s field is required." property_info.Name) ]
-
-            let attrs_b = 
-                [
+            let attrs_b =
+                (
                     if not type_attribute_provided then
-                        _type type_value
-                    attr "data-val" "true"
-                ] 
-            
-            let attrs_d = 
+                        [ _type type_value ]
+                    else
+                        []                        
+                )
+                @
+                [ attr "data-val" "true"]
+                @
+                (
+                    match property_info.PropertyType.Name with
+                    | "Int32"
+                    | "DateTime" -> [ attr "data-val-required" (sprintf "The %s field is required." display_name) ]
+                    | "Decimal"  ->
+                        [
+                            attr "data-val-number" (sprintf "The field %s must be a number." display_name)
+                            attr "data-val-required" (sprintf "The %s field is required." display_name)
+                        ]
+                    | _ -> []
+                )
+                @
+                (
+                    let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<StringLengthAttribute>) :?> StringLengthAttribute
+
+                    if (not (isNull cattr)) then
+                        if (cattr.MinimumLength > 0) then
+                            [
+                                attr "data-val-length" (sprintf "The field %s must be a string with a minimum length of %i and a maximum length of %i." property_info.Name cattr.MinimumLength cattr.MaximumLength)
+                                attr "data-val-length-max" (string cattr.MaximumLength)
+                                attr "data-val-length-min" (string cattr.MinimumLength)
+                                attr "maxlength" (string cattr.MaximumLength)
+                            ]
+                        else
+                            [
+                                attr "data-val-length" (sprintf "The field %s must be a string with a maximum length of %i." property_info.Name cattr.MaximumLength)
+                                attr "data-val-length-max" (string cattr.MaximumLength)
+                                attr "maxlength" (string cattr.MaximumLength)
+                            ]
+                    else []
+                )
+                @
+                (
+                    let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RegularExpressionAttribute>) :?> RegularExpressionAttribute
+
+                    if (not (isNull cattr)) then
+                        [
+                            attr "data-val-regex" (sprintf "The field %s must match the regular expression %s." property_info.Name cattr.Pattern)
+                            attr "data-val-regex-pattern" cattr.Pattern
+                        ]
+                    else []
+                )
+                @
+                (
+                    let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RangeAttribute>) :?> RangeAttribute
+
+                    if (not (isNull cattr)) then
+                        [
+                            attr "data-val-range" (sprintf "The field %s must be between %s and %s." property_info.Name (string cattr.Minimum) (string cattr.Maximum))
+                            attr "data-val-range-max" (string cattr.Maximum)
+                            attr "data-val-range-min" (string cattr.Minimum)
+                        ]
+                    else []
+                )
+                @
+                (
+                    let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<RequiredAttribute>) :?> RequiredAttribute
+
+                    if (not (isNull cattr)) then
+                        [ attr "data-val-required" (sprintf "The %s field is required." property_info.Name) ]
+                    else []                    
+                )
+                @
                 [
                     _id property_info.Name
                     _name property_info.Name
@@ -136,14 +150,13 @@ type Input =
                                 (string (get_current_value()))
                         )
 
-                ]                                 
-
-            input (attrs_a @ attrs_b @ ls @ attrs_d)
+                ]                    
             
-        | _ -> encodedText ""
+            input (attrs_a @ attrs_b)
+            
+        | _ -> failwith "tag helper issue"
 
 // ----------------------------------------------------------------------
-
 
 [<RequireQualifiedAccess>]
 type SpanValidation =
@@ -189,7 +202,7 @@ type SpanValidation =
 
             span ((List.ofSeq attrs_b) @ attrs_c) []
             
-        | _ -> encodedText ""
+        | _ -> failwith "tag helper issue"
 
 // ----------------------------------------------------------------------
 

@@ -332,7 +332,7 @@ module Views =
 
         ] |> layout "Create" validation_scripts_partial
 
-    let edit (model : Movie) =
+    let edit (model : Movie) (request_token : string) =
         [
             h1 [] [ encodedText "Edit" ]
 
@@ -366,7 +366,11 @@ module Views =
                             input [ _type "submit"; _value "Save"; _class "btn btn-primary" ]
                         ]
 
-                        input [ _name "__RequestVerificationToken"; _type "hidden"; _value "..." ]
+                        input [
+                            _name "__RequestVerificationToken"
+                            _type "hidden"
+                            _value request_token
+                        ]
                     ]
                 ]
             ]
@@ -526,28 +530,40 @@ let edit_handler (id : int) : HttpHandler =
         if (isNull (box movie)) then
             RequestErrors.notFound (text "Not Found") next ctx
         else
-            let view = Views.edit movie
+            let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+        
+            let token_set = antiforgery.GetAndStoreTokens(ctx)
+
+            let view = Views.edit movie token_set.RequestToken
+
             htmlView view next ctx
 
 let post_edit_handler (id : int) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
 
+        let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+
         task {
-            let! movie = ctx.BindFormAsync<Movie>()
 
-            if id <> movie.Id then
-                return! RequestErrors.NOT_FOUND movie next ctx
-            else
-                let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+            if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
 
-                try
-                    context.Update(movie) |> ignore
-                    context.SaveChanges() |> ignore
+                let! movie = ctx.BindFormAsync<Movie>()
 
-                    return! Successful.OK movie next ctx
-                with
-                    | :? DbUpdateConcurrencyException as ex ->
+                if id <> movie.Id then
                     return! RequestErrors.NOT_FOUND movie next ctx
+                else
+                    let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+
+                    try
+                        context.Update(movie) |> ignore
+                        context.SaveChanges() |> ignore
+                        
+                        return! redirectTo false "/Movies" next ctx
+                    with
+                        | :? DbUpdateConcurrencyException as ex ->
+                        return! RequestErrors.NOT_FOUND movie next ctx
+            else
+                return! RequestErrors.BAD_REQUEST 10 next ctx            
         }
 
 let delete_handler (id : int) : HttpHandler =

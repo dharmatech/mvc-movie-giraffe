@@ -211,16 +211,16 @@ type Label =
     static member Of([<ReflectedDefinition>] expr: Expr<'a>, attrs_a: XmlAttribute list) =
         match expr with
         | PropInfo(property_info, _) ->
-                        
-            let mutable display_name = property_info.Name
 
-            let _ =
+            let display_name =
 
                 let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DisplayAttribute>) :?> DisplayAttribute
 
                 if (not (isNull cattr)) then
-                    display_name <- cattr.Name
-
+                    cattr.Name
+                else
+                    property_info.Name        
+            
             // System.Console.WriteLine(property_name + " : " + property_info.PropertyType.Name)
 
             label (attrs_a @ [ _for property_info.Name ]) [ encodedText display_name ]

@@ -380,7 +380,7 @@ module Views =
             ]
         ] |> layout "Edit" validation_scripts_partial
 
-    let delete (model : Movie) = 
+    let delete (model : Movie) (request_token : string) =
         [
             h1 [] [ encodedText "Delete" ]
 
@@ -415,7 +415,11 @@ module Views =
 
                     a [ _href "/Movies" ] [ encodedText "Back to List" ]
 
-                    input [ _name "__RequestVerificationToken"; _type "hidden"; _value "..." ]
+                    input [ 
+                        _name "__RequestVerificationToken"
+                        _type "hidden"
+                        _value request_token
+                    ]
                 ]
             ]
         ] |> layout "Delete" []
@@ -576,23 +580,33 @@ let delete_handler (id : int) : HttpHandler =
         if (isNull (box movie)) then
             RequestErrors.notFound (text "delete - Not Found") next ctx
         else
-            let view = Views.delete movie
+            let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
+        
+            let token_set = antiforgery.GetAndStoreTokens(ctx)            
+
+            let view = Views.delete movie token_set.RequestToken
 
             htmlView view next ctx           
 
 let post_delete_handler (id : int) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
 
-        let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+        let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery    
 
-        let movie = context.Movie.Find(id)
+        if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
 
-        context.Movie.Remove(movie) |> ignore
-        context.SaveChanges()       |> ignore
+            let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
 
-        // redirect "/Movies"
+            let movie = context.Movie.Find(id)
 
-        htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "delete - ok")  next ctx
+            context.Movie.Remove(movie) |> ignore
+            context.SaveChanges()       |> ignore
+
+            // redirect "/Movies"
+
+            htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "delete - ok")  next ctx
+        else
+            RequestErrors.BAD_REQUEST 10 next ctx
        
 let webApp =
 

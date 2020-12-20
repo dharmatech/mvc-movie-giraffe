@@ -25,6 +25,6 @@ Then go to:
 
 # Thanks
 
-ksensos1 [explained how to programatically setup antiforgery](https://www.reddit.com/r/dotnet/comments/hm7dh4/aspnet_core_is_there_a_way_to_programmatically/fx3hpxn/). See also [this stackoverflow post](https://stackoverflow.com/questions/62745448/programmatically-generating-request-verification-token).
+ksensos1 [explained how to programatically setup antiforgery](https://www.reddit.com/r/dotnet/comments/hm7dh4/aspnet_core_is_there_a_way_to_programmatically/fx3hpxn/).
 
 Chet Husk [demonstrated](https://github.com/giraffe-fsharp/Giraffe/discussions/457#discussioncomment-206261) a very nice expression-based approach to tag-helpers.

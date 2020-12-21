@@ -507,7 +507,9 @@ let post_create_handler : HttpHandler =
         let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery
                 
         task {
-            if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
+            let! result = Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))
+
+            if result then
 
                 let! movie = ctx.BindFormAsync<Movie>()
 
@@ -519,9 +521,7 @@ let post_create_handler : HttpHandler =
                 return! redirectTo false "/Movies" next ctx
                                 
             else
-                return! RequestErrors.BAD_REQUEST 10 next ctx
-
-                // return! RequestErrors.badRequest (text "abc") next ctx
+                return! RequestErrors.BAD_REQUEST 10 next ctx            
         }
         
 let edit_handler (id : int) : HttpHandler =
@@ -549,7 +549,9 @@ let post_edit_handler (id : int) : HttpHandler =
 
         task {
 
-            if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
+            let! result = Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))
+
+            if result then
 
                 let! movie = ctx.BindFormAsync<Movie>()
 
@@ -593,20 +595,24 @@ let post_delete_handler (id : int) : HttpHandler =
 
         let antiforgery = ctx.RequestServices.GetService(typeof<Microsoft.AspNetCore.Antiforgery.IAntiforgery>) :?> Microsoft.AspNetCore.Antiforgery.IAntiforgery    
 
-        if Async.RunSynchronously(Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))) then
+        task {
+            let! result = Async.AwaitTask(antiforgery.IsRequestValidAsync(ctx))
 
-            let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
+            if result then
 
-            let movie = context.Movie.Find(id)
+                let context = ctx.RequestServices.GetService(typeof<MvcMovieContext>) :?> MvcMovieContext
 
-            context.Movie.Remove(movie) |> ignore
-            context.SaveChanges()       |> ignore
+                let movie = context.Movie.Find(id)
 
-            // redirect "/Movies"
+                context.Movie.Remove(movie) |> ignore
+                context.SaveChanges()       |> ignore
+                
+                return! redirectTo false "/Movies" next ctx
+            else
+                return! RequestErrors.BAD_REQUEST 10 next ctx
+        }
 
-            htmlView (Giraffe.ViewEngine.HtmlElements.encodedText "delete - ok")  next ctx
-        else
-            RequestErrors.BAD_REQUEST 10 next ctx
+
        
 let webApp =
 

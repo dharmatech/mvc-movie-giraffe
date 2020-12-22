@@ -258,6 +258,8 @@ type Display =
                 get_current_value() |> string
             elif data_type_attr.DataType = DataType.Date then
                 (get_current_value() :?> System.DateTime).ToString "d"
+            elif data_type_attr.DataType = DataType.Currency then
+                (get_current_value() :?> System.Decimal).ToString "C"
             else
                 get_current_value() |> string
          

@@ -83,54 +83,57 @@ module DataContextInitialize =
     let Initialize (context : MvcMovieContext) =
         context.Database.EnsureCreated() |> ignore
 
-        context.Movie.AddRange(
-            {
-                Id = 0 
-                Title = "Enter the Dragon"
-                ReleaseDate = DateTime.Parse("1973-08-19")
-                Genre = "Martial Arts"
-                Price = 7.99M
-                Rating = "R"
-            },
-            
-            {
-                Id = 0
-                Title = "The Twilight Samurai"
-                ReleaseDate = DateTime.Parse("2002-11-02")
-                Genre = "Samurai"
-                Price = 8.99M
-                Rating = "R"
-            },
-            
-            {
-                Id = 0
-                Title = "Ford v Ferrari"
-                ReleaseDate = DateTime.Parse("2019-11-15")
-                Genre = "Racing"
-                Price = 9.99M
-                Rating = "PG-13"
-            },
+        if (context.Movie.Count() = 0) then
 
-            {
-                Id = 0
-                Title = "War Games"
-                ReleaseDate = DateTime.Parse("1983-06-03")
-                Genre = "Computer Hacker"
-                Price = 3.99M
-                Rating = "PG"
-            },
-            
-            {
-                Id = 0
-                Title = "Rio Bravo"
-                ReleaseDate = DateTime.Parse("1959-4-15")
-                Genre = "Western"
-                Price = 3.99M
-                Rating = "G"
-            }            
-        ) |> ignore
+            context.Movie.AddRange(
+                {
+                    Id = 0 
+                    Title = "Enter the Dragon"
+                    ReleaseDate = DateTime.Parse("1973-08-19")
+                    Genre = "Martial Arts"
+                    Price = 7.99M
+                    Rating = "R"
+                },
+                
+                {
+                    Id = 0
+                    Title = "The Twilight Samurai"
+                    ReleaseDate = DateTime.Parse("2002-11-02")
+                    Genre = "Samurai"
+                    Price = 8.99M
+                    Rating = "R"
+                },
+                
+                {
+                    Id = 0
+                    Title = "Ford v Ferrari"
+                    ReleaseDate = DateTime.Parse("2019-11-15")
+                    Genre = "Racing"
+                    Price = 9.99M
+                    Rating = "PG-13"
+                },
 
-        context.SaveChanges() |> ignore
+                {
+                    Id = 0
+                    Title = "War Games"
+                    ReleaseDate = DateTime.Parse("1983-06-03")
+                    Genre = "Computer Hacker"
+                    Price = 3.99M
+                    Rating = "PG"
+                },
+                
+                {
+                    Id = 0
+                    Title = "Rio Bravo"
+                    ReleaseDate = DateTime.Parse("1959-4-15")
+                    Genre = "Western"
+                    Price = 3.99M
+                    Rating = "G"
+                }            
+            ) |> ignore
+
+            context.SaveChanges() |> ignore
+
 
 // ---------------------------------
 // Views
@@ -684,8 +687,8 @@ let configureServices (services : IServiceCollection) =
 
     services.AddDbContext<MvcMovieContext>(fun options ->
             // options.UseSqlite(Configuration.GetConnectionString("MvcMovieContext"))
-            // options.UseSqlite("Data Source=MvcMovie.db") |> ignore
-            options.UseInMemoryDatabase("DB_ToDo") |> ignore
+            options.UseSqlite("Data Source=MvcMovie.db") |> ignore
+            // options.UseInMemoryDatabase("DB_ToDo") |> ignore
         ) |> ignore
 
 let configureLogging (builder : ILoggingBuilder) =

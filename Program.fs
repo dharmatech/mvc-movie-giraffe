@@ -144,8 +144,7 @@ module Urls =
     let movies = "/Movies"
 
     let movies_create = "/Movies/Create"
-    // let movies_create_route = PrintfFormat<obj, obj, obj, obj, int>(movies_create)
-
+    
     let movies_edit = "/Movies/Edit/%i"
     let movies_edit_href = sprintf (Printf.StringFormat<int->string>(movies_edit))
     let movies_edit_route = PrintfFormat<obj, obj, obj, obj, int>(movies_edit)
@@ -157,14 +156,6 @@ module Urls =
     let movies_delete = "/Movies/Details/%i"
     let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete))
     let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete)
-
-
-// Urls.movies_edit.href
-// Urls.movies_edit.route
-
-type String with
-    member this.route = PrintfFormat<obj, obj, obj, obj, int>(this)
-    member this.href = sprintf (Printf.StringFormat<int->string>(this))
 
 module Views =
     open Giraffe.ViewEngine

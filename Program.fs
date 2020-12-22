@@ -240,7 +240,7 @@ module Views =
                         td [] [ encodedText elt.Title ]
                         td [] [ encodedText (TagHelpers.Display.For elt.ReleaseDate) ]
                         td [] [ encodedText elt.Genre ]
-                        td [] [ encodedText (string elt.Price) ]
+                        td [] [ encodedText (TagHelpers.Display.For elt.Price) ]
                         td [] [ encodedText elt.Rating ]
 
                         td [] [

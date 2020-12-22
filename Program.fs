@@ -142,8 +142,29 @@ module DataContextInitialize =
 module Urls =
 
     let movies = "/Movies"
+
     let movies_create = "/Movies/Create"
+    // let movies_create_route = PrintfFormat<obj, obj, obj, obj, int>(movies_create)
+
     let movies_edit = "/Movies/Edit/%i"
+    let movies_edit_href = sprintf (Printf.StringFormat<int->string>(movies_edit))
+    let movies_edit_route = PrintfFormat<obj, obj, obj, obj, int>(movies_edit)
+
+    let movies_details = "/Movies/Details/%i"
+    let movies_details_href = sprintf (Printf.StringFormat<int->string>(movies_details))
+    let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details)
+
+    let movies_delete = "/Movies/Details/%i"
+    let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete))
+    let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete)
+
+
+// Urls.movies_edit.href
+// Urls.movies_edit.route
+
+type String with
+    member this.route = PrintfFormat<obj, obj, obj, obj, int>(this)
+    member this.href = sprintf (Printf.StringFormat<int->string>(this))
 
 module Views =
     open Giraffe.ViewEngine
@@ -250,13 +271,17 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
+                            // a [ _href ("/Movies/Edit/"    + (string elt.Id)) ] [ encodedText "Edit" ]
                             // let fmt_b = Printf.StringFormat<int->string>(Urls.movies_edit)
                             // a [ _href (sprintf fmt_b elt.Id) ] [ encodedText "Edit" ]
-                            a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
+                            // a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
+                            a [ _href (Urls.movies_edit_href elt.Id) ] [ encodedText "Edit" ]
+                            // a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
                             encodedText " | "
-                            a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
+                            // a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
+                            a [ _href (Urls.movies_details_href elt.Id) ] [ encodedText "Details" ]
                             encodedText " | "
-                            a [ _href ("/Movies/Delete/"  + (string elt.Id)) ] [ encodedText "Delete" ]
+                            a [ _href (Urls.movies_delete_href elt.Id) ] [ encodedText "Delete" ]
                         ]
                     ])))
             ]
@@ -290,7 +315,8 @@ module Views =
             ]
 
             div [] [
-                a [ _href ("/Movies/Edit/" + (string model.Id)) ] [ encodedText "Edit" ]
+                // a [ _href ("/Movies/Edit/" + (string model.Id)) ] [ encodedText "Edit" ]
+                a [ _href (Urls.movies_edit_href model.Id) ] [ encodedText "Edit" ]
 
                 encodedText "|"
 
@@ -353,7 +379,7 @@ module Views =
 
             div [ _class "row" ] [
                 div [ _class "col-md-4" ] [
-                    form [ _action ("/Movies/Edit/" + (string model.Id)); _method "post" ] [
+                    form [ _action (Urls.movies_edit_href model.Id); _method "post" ] [
 
                         TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
 
@@ -416,7 +442,7 @@ module Views =
                     (entry "Rating" model.Rating)
                 )
 
-                form [ _action ("/Movies/Delete/" + (string model.Id)); _method "post" ] [
+                form [ _action (Urls.movies_delete_href model.Id); _method "post" ] [
 
                     TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
                     
@@ -628,21 +654,32 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route  "/Movies" >=>        movies_handler
-                routef "/Movies/Details/%i" details_handler
-                route  "/Movies/Create" >=> create_handler
+                route  Urls.movies >=>        movies_handler
+                // routef "/Movies/Details/%i" details_handler
+                routef Urls.movies_details_route details_handler
+                // route  "/Movies/Create" >=> create_handler
+                route Urls.movies_create >=> create_handler
 
                 // routef "/Movies/Edit/%i"    edit_handler
                                 
-                routef (PrintfFormat<obj, obj, obj, obj, int>(Urls.movies_edit))    edit_handler
+                // routef (PrintfFormat<obj, obj, obj, obj, int>(Urls.movies_edit))    edit_handler
 
-                routef "/Movies/Delete/%i"  delete_handler
+                routef Urls.movies_edit_route edit_handler
+
+                // routef Urls.movies_edit.route edit_handler
+
+                // routef "/Movies/Delete/%i"  delete_handler
+
+                routef Urls.movies_delete_route delete_handler
             ]
                 
         POST >=> choose [ 
-            route  "/Movies/Create"  >=> post_create_handler
-            routef "/Movies/Edit/%i"     post_edit_handler
-            routef "/Movies/Delete/%i"   post_delete_handler
+            // route  "/Movies/Create"  >=> post_create_handler
+            route  Urls.movies_create >=> post_create_handler
+            // routef "/Movies/Edit/%i"     post_edit_handler
+            routef Urls.movies_edit_route     post_edit_handler
+            // routef "/Movies/Delete/%i"   post_delete_handler
+            routef Urls.movies_delete_route   post_delete_handler
         ]
 
         setStatusCode 404 >=> text "Not Found" ]

@@ -16,12 +16,25 @@ git clone https://github.com/dharmatech/mvc-movie-giraffe.git
 cd mvc-movie-giraffe
 libman restore
 dotnet restore
+dotnet build
 dotnet watch run
 ```
 
 Then go to:
 
     http://localhost:5000/Movies
+
+# Platforms
+
+The project has been run and tested on:
+
+* Windows
+* Ubuntu
+
+The project file can be opened in:
+
+* Visual Studio 2019 for Windows
+* Visual Studio Code with Ionide.
 
 # Thanks
 

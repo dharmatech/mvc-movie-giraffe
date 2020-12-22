@@ -143,6 +143,7 @@ module Urls =
 
     let movies = "/Movies"
     let movies_create = "/Movies/Create"
+    let movies_edit = "/Movies/Edit/%i"
 
 module Views =
     open Giraffe.ViewEngine
@@ -210,7 +211,7 @@ module Views =
 
             p [] [ a [ _href Urls.movies_create ] [ encodedText "Create New" ] ]
 
-            form [ _method "get"; _action "/Movies" ] [
+            form [ _method "get"; _action Urls.movies ] [
                 p [] [
 
                     select [ _id "MovieGenre"; _name "MovieGenre" ] (
@@ -249,7 +250,9 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            a [ _href ("/Movies/Edit/"    + (string elt.Id)) ] [ encodedText "Edit" ]
+                            // let fmt_b = Printf.StringFormat<int->string>(Urls.movies_edit)
+                            // a [ _href (sprintf fmt_b elt.Id) ] [ encodedText "Edit" ]
+                            a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
                             encodedText " | "
                             a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
                             encodedText " | "
@@ -628,7 +631,11 @@ let webApp =
                 route  "/Movies" >=>        movies_handler
                 routef "/Movies/Details/%i" details_handler
                 route  "/Movies/Create" >=> create_handler
-                routef "/Movies/Edit/%i"    edit_handler
+
+                // routef "/Movies/Edit/%i"    edit_handler
+                                
+                routef (PrintfFormat<obj, obj, obj, obj, int>(Urls.movies_edit))    edit_handler
+
                 routef "/Movies/Delete/%i"  delete_handler
             ]
                 

@@ -227,18 +227,18 @@ module Views =
                 thead [] [
                     tr [] [
                         th [] [ encodedText "Title" ]
-                        th [] [ encodedText "ReleaseDate" ]
+                        th [] [ encodedText (TagHelpers.Display.NameFor(Unchecked.defaultof<Movie>.ReleaseDate)) ]
                         th [] [ encodedText "Genre" ]
                         th [] [ encodedText "Price" ]
                         th [] [ encodedText "Rating" ]
                         th [] []
                     ]
                 ]
-
+                
                 tbody [] (Seq.toList (model.Movies.ToList().Select(fun elt -> 
                     tr [] [
                         td [] [ encodedText elt.Title ]
-                        td [] [ encodedText (string elt.ReleaseDate) ]
+                        td [] [ encodedText (TagHelpers.Display.For elt.ReleaseDate) ]
                         td [] [ encodedText elt.Genre ]
                         td [] [ encodedText (string elt.Price) ]
                         td [] [ encodedText elt.Rating ]

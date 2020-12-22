@@ -226,3 +226,39 @@ type Label =
             label (attrs_a @ [ _for property_info.Name ]) [ encodedText display_name ]
         
         | _ -> failwith "tag helper issue"
+
+// ----------------------------------------------------------------------
+
+[<RequireQualifiedAccess>]
+type Display =
+    static member NameFor([<ReflectedDefinition>] expr: Expr<'a>) =
+        match expr with
+        | PropInfo(property_info, _) ->
+
+            let display_name =
+
+                let cattr = System.Attribute.GetCustomAttribute(property_info, typedefof<DisplayAttribute>) :?> DisplayAttribute
+
+                if (not (isNull cattr)) then
+                    cattr.Name
+                else
+                    property_info.Name        
+
+            display_name
+                    
+        | _ -> failwith "tag helper issue"    
+
+    static member For([<ReflectedDefinition>] expr: Expr<'a>) =
+        match expr with
+        | PropInfo(property_info, get_current_value) ->
+                    
+            let data_type_attr = System.Attribute.GetCustomAttribute(property_info, typedefof<DataTypeAttribute>) :?> DataTypeAttribute
+
+            if (isNull data_type_attr) then
+                get_current_value() |> string
+            elif data_type_attr.DataType = DataType.Date then
+                (get_current_value() :?> System.DateTime).ToString "d"
+            else
+                get_current_value() |> string
+         
+        | _ -> failwith "tag helper issue"    

@@ -139,6 +139,11 @@ module DataContextInitialize =
 // Views
 // ---------------------------------
 
+module Urls =
+
+    let movies = "/Movies"
+    let movies_create = "/Movies/Create"
+
 module Views =
     open Giraffe.ViewEngine
 
@@ -203,7 +208,7 @@ module Views =
         [
             h1 [] [ encodedText "Index" ]
 
-            p [] [ a [ _href "/Movies/Create" ] [ encodedText "Create New" ] ]
+            p [] [ a [ _href Urls.movies_create ] [ encodedText "Create New" ] ]
 
             form [ _method "get"; _action "/Movies" ] [
                 p [] [

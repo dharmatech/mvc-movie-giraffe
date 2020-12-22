@@ -645,32 +645,17 @@ let webApp =
     choose [
         GET >=>
             choose [
-                route  Urls.movies >=>        movies_handler
-                // routef "/Movies/Details/%i" details_handler
-                routef Urls.movies_details_route details_handler
-                // route  "/Movies/Create" >=> create_handler
-                route Urls.movies_create >=> create_handler
-
-                // routef "/Movies/Edit/%i"    edit_handler
-                                
-                // routef (PrintfFormat<obj, obj, obj, obj, int>(Urls.movies_edit))    edit_handler
-
-                routef Urls.movies_edit_route edit_handler
-
-                // routef Urls.movies_edit.route edit_handler
-
-                // routef "/Movies/Delete/%i"  delete_handler
-
-                routef Urls.movies_delete_route delete_handler
+                route  Urls.movies               >=> movies_handler
+                route  Urls.movies_create        >=> create_handler                
+                routef Urls.movies_details_route     details_handler
+                routef Urls.movies_edit_route        edit_handler
+                routef Urls.movies_delete_route      delete_handler
             ]
                 
         POST >=> choose [ 
-            // route  "/Movies/Create"  >=> post_create_handler
-            route  Urls.movies_create >=> post_create_handler
-            // routef "/Movies/Edit/%i"     post_edit_handler
-            routef Urls.movies_edit_route     post_edit_handler
-            // routef "/Movies/Delete/%i"   post_delete_handler
-            routef Urls.movies_delete_route   post_delete_handler
+            route  Urls.movies_create       >=> post_create_handler
+            routef Urls.movies_edit_route       post_edit_handler
+            routef Urls.movies_delete_route     post_delete_handler
         ]
 
         setStatusCode 404 >=> text "Not Found" ]

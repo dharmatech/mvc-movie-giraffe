@@ -614,33 +614,17 @@ let post_delete_handler (id : int) : HttpHandler =
             else
                 return! RequestErrors.BAD_REQUEST 10 next ctx
         }
-
-
        
 let webApp =
-
-    let example_movie =
-        {
-            Id = 123
-            Title = "Abc"
-            ReleaseDate = DateTime.Now
-            Genre = "Xyz"
-            Price = 1.23M
-            Rating = "G"
-        }
 
     choose [
         GET >=>
             choose [
-                route "/Movies" >=> movies_handler
-
+                route  "/Movies" >=>        movies_handler
                 routef "/Movies/Details/%i" details_handler
-
-                route "/Movies/Create" >=> create_handler
-
-                routef "/Movies/Edit/%i" edit_handler
-
-                routef "/Movies/Delete/%i" delete_handler
+                route  "/Movies/Create" >=> create_handler
+                routef "/Movies/Edit/%i"    edit_handler
+                routef "/Movies/Delete/%i"  delete_handler
             ]
                 
         POST >=> choose [ 

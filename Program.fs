@@ -145,17 +145,17 @@ module Urls =
 
     let movies_create = "/Movies/Create"
     
-    let movies_edit = "/Movies/Edit/%i"
-    let movies_edit_href = sprintf (Printf.StringFormat<int->string>(movies_edit))
-    let movies_edit_route = PrintfFormat<obj, obj, obj, obj, int>(movies_edit)
+    let movies_edit_template = "/Movies/Edit/%i"
+    let movies_edit = sprintf (Printf.StringFormat<int->string>(movies_edit_template))
+    let movies_edit_route = PrintfFormat<obj, obj, obj, obj, int>(movies_edit_template)
 
-    let movies_details = "/Movies/Details/%i"
-    let movies_details_href = sprintf (Printf.StringFormat<int->string>(movies_details))
-    let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details)
+    let movies_details_template = "/Movies/Details/%i"
+    let movies_details_href = sprintf (Printf.StringFormat<int->string>(movies_details_template))
+    let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details_template)
 
-    let movies_delete = "/Movies/Delete/%i"
-    let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete))
-    let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete)
+    let movies_delete_template = "/Movies/Delete/%i"
+    let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete_template))
+    let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete_template)
 
 module Views =
     open Giraffe.ViewEngine
@@ -262,17 +262,9 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            // a [ _href ("/Movies/Edit/"    + (string elt.Id)) ] [ encodedText "Edit" ]
-                            // let fmt_b = Printf.StringFormat<int->string>(Urls.movies_edit)
-                            // a [ _href (sprintf fmt_b elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
-                            a [ _href (Urls.movies_edit_href elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
-                            encodedText " | "
-                            // a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
-                            a [ _href (Urls.movies_details_href elt.Id) ] [ encodedText "Details" ]
-                            encodedText " | "
-                            a [ _href (Urls.movies_delete_href elt.Id) ] [ encodedText "Delete" ]
+                            a [ _href (Urls.movies_edit elt.Id)         ] [ encodedText "Edit"    ]; encodedText " | "
+                            a [ _href (Urls.movies_details_href elt.Id) ] [ encodedText "Details" ]; encodedText " | "
+                            a [ _href (Urls.movies_delete_href elt.Id)  ] [ encodedText "Delete" ]
                         ]
                     ])))
             ]
@@ -306,8 +298,7 @@ module Views =
             ]
 
             div [] [
-                // a [ _href ("/Movies/Edit/" + (string model.Id)) ] [ encodedText "Edit" ]
-                a [ _href (Urls.movies_edit_href model.Id) ] [ encodedText "Edit" ]
+                a [ _href (Urls.movies_edit model.Id) ] [ encodedText "Edit" ]
 
                 encodedText "|"
 
@@ -370,7 +361,7 @@ module Views =
 
             div [ _class "row" ] [
                 div [ _class "col-md-4" ] [
-                    form [ _action (Urls.movies_edit_href model.Id); _method "post" ] [
+                    form [ _action (Urls.movies_edit model.Id); _method "post" ] [
 
                         TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
 

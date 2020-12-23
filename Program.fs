@@ -153,7 +153,7 @@ module Urls =
     let movies_details_href = sprintf (Printf.StringFormat<int->string>(movies_details))
     let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details)
 
-    let movies_delete = "/Movies/Details/%i"
+    let movies_delete = "/Movies/Delete/%i"
     let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete))
     let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete)
 

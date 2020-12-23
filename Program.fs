@@ -149,7 +149,7 @@ module Urls =
     
 type String with
     member this.route = PrintfFormat<obj, obj, obj, obj, int>(this)
-    member this.href = sprintf (Printf.StringFormat<int->string>(this))
+    member this.url = sprintf (Printf.StringFormat<int->string>(this))
 
 module Views =
     open Giraffe.ViewEngine
@@ -256,11 +256,9 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
-                            encodedText " | "
-                            a [ _href (Urls.movies_details.href elt.Id) ] [ encodedText "Details" ]
-                            encodedText " | "
-                            a [ _href (Urls.movies_delete.href elt.Id) ] [ encodedText "Delete" ]
+                            a [ _href (Urls.movies_edit.url    elt.Id) ] [ encodedText "Edit"    ]; encodedText " | "
+                            a [ _href (Urls.movies_details.url elt.Id) ] [ encodedText "Details" ]; encodedText " | "
+                            a [ _href (Urls.movies_delete.url  elt.Id) ] [ encodedText "Delete"  ]
                         ]
                     ])))
             ]
@@ -294,11 +292,8 @@ module Views =
             ]
 
             div [] [
-                a [ _href (Urls.movies_edit.href model.Id) ] [ encodedText "Edit" ]
-
-                encodedText "|"
-
-                a [ _href "/Movies" ] [ encodedText "Back to list" ]
+                a [ _href (Urls.movies_edit.url model.Id) ] [ encodedText "Edit" ]; encodedText "|"
+                a [ _href Urls.movies ] [ encodedText "Back to list" ]
             ]
         ] |> layout "Details" []
 
@@ -357,7 +352,7 @@ module Views =
 
             div [ _class "row" ] [
                 div [ _class "col-md-4" ] [
-                    form [ _action (Urls.movies_edit.href model.Id); _method "post" ] [
+                    form [ _action (Urls.movies_edit.url model.Id); _method "post" ] [
 
                         TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
 
@@ -420,7 +415,7 @@ module Views =
                     (entry "Rating" model.Rating)
                 )
 
-                form [ _action (Urls.movies_delete.href model.Id); _method "post" ] [
+                form [ _action (Urls.movies_delete.url model.Id); _method "post" ] [
 
                     TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
                     

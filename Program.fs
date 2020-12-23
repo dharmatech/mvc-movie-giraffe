@@ -272,12 +272,8 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            // a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (href_str<int>(Urls.movies_edit) elt.Id) ] [ encodedText "Edit" ]
-                            a [ _href (EditUrl elt.Id) ] [ encodedText "Edit" ]
-                            encodedText " | "
-                            a [ _href (Urls.movies_details.href elt.Id) ] [ encodedText "Details" ]
-                            encodedText " | "
+                            a [ _href (EditUrl elt.Id) ] [ encodedText "Edit" ]; encodedText " | "
+                            a [ _href (Urls.movies_details.href elt.Id) ] [ encodedText "Details" ]; encodedText " | "
                             a [ _href (Urls.movies_delete.href elt.Id) ] [ encodedText "Delete" ]
                         ]
                     ])))

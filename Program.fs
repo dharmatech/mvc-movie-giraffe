@@ -153,7 +153,7 @@ type String with
 
 module Views =
     open Giraffe.ViewEngine
-
+    
     let layout (title_data: string) (scripts : XmlNode list) (content: XmlNode list) =
         html [] [
             head [] [
@@ -307,7 +307,7 @@ module Views =
 
             div [ _class "row" ] [
                 div [ _class "col-md-4" ] [
-                    form [ _action "/Movies/Create"; _method "post" ] [
+                    form [ _action Urls.movies_create; _method "post" ] [
 
                         let form_group (expr : FSharp.Quotations.Expr<'a>) =
                             div [ _class "form-group" ] 
@@ -338,7 +338,7 @@ module Views =
                 ]
             ]
         
-            div [] [ a [ _href "/Movies" ] [ encodedText "Back to List" ] ]
+            div [] [ a [ _href Urls.movies ] [ encodedText "Back to List" ] ]
 
         ] |> layout "Create" validation_scripts_partial
 
@@ -386,7 +386,7 @@ module Views =
             ]
 
             div [] [
-                a [ _href "/Movies" ] [ encodedText "Back to List" ]
+                a [ _href Urls.movies ] [ encodedText "Back to List" ]
             ]
         ] |> layout "Edit" validation_scripts_partial
 
@@ -423,7 +423,7 @@ module Views =
 
                     encodedText " | "
 
-                    a [ _href "/Movies" ] [ encodedText "Back to List" ]
+                    a [ _href Urls.movies ] [ encodedText "Back to List" ]
 
                     input [ 
                         _name "__RequestVerificationToken"

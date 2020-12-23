@@ -528,7 +528,7 @@ let post_create_handler : HttpHandler =
                 context.Add(movie) |> ignore
                 context.SaveChanges() |> ignore
                 
-                return! redirectTo false "/Movies" next ctx
+                return! redirectTo false Urls.movies next ctx
                                 
             else
                 return! RequestErrors.BAD_REQUEST 10 next ctx            
@@ -574,7 +574,7 @@ let post_edit_handler (id : int) : HttpHandler =
                         context.Update(movie) |> ignore
                         context.SaveChanges() |> ignore
                         
-                        return! redirectTo false "/Movies" next ctx
+                        return! redirectTo false Urls.movies next ctx
                     with
                         | :? DbUpdateConcurrencyException as ex ->
                         return! RequestErrors.NOT_FOUND movie next ctx
@@ -617,7 +617,7 @@ let post_delete_handler (id : int) : HttpHandler =
                 context.Movie.Remove(movie) |> ignore
                 context.SaveChanges()       |> ignore
                 
-                return! redirectTo false "/Movies" next ctx
+                return! redirectTo false Urls.movies next ctx
             else
                 return! RequestErrors.BAD_REQUEST 10 next ctx
         }

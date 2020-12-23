@@ -256,14 +256,8 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            // a [ _href ("/Movies/Edit/"    + (string elt.Id)) ] [ encodedText "Edit" ]
-                            // let fmt_b = Printf.StringFormat<int->string>(Urls.movies_edit)
-                            // a [ _href (sprintf fmt_b elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
                             a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
                             encodedText " | "
-                            // a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
                             a [ _href (Urls.movies_details.href elt.Id) ] [ encodedText "Details" ]
                             encodedText " | "
                             a [ _href (Urls.movies_delete.href elt.Id) ] [ encodedText "Delete" ]
@@ -300,7 +294,6 @@ module Views =
             ]
 
             div [] [
-                // a [ _href ("/Movies/Edit/" + (string model.Id)) ] [ encodedText "Edit" ]
                 a [ _href (Urls.movies_edit.href model.Id) ] [ encodedText "Edit" ]
 
                 encodedText "|"

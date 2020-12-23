@@ -150,11 +150,11 @@ module Urls =
     let movies_edit_route = PrintfFormat<obj, obj, obj, obj, int>(movies_edit_template)
 
     let movies_details_template = "/Movies/Details/%i"
-    let movies_details_href = sprintf (Printf.StringFormat<int->string>(movies_details_template))
-    let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details_template)
+    let movies_details = sprintf (Printf.StringFormat<int->string>(movies_details_template))
+    let movies_details_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_details_template)   
 
     let movies_delete_template = "/Movies/Delete/%i"
-    let movies_delete_href = sprintf (Printf.StringFormat<int->string>(movies_delete_template))
+    let movies_delete = sprintf (Printf.StringFormat<int->string>(movies_delete_template))
     let movies_delete_route = PrintfFormat<obj, obj, obj, obj, int>   (movies_delete_template)
 
 module Views =
@@ -262,9 +262,9 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            a [ _href (Urls.movies_edit elt.Id)         ] [ encodedText "Edit"    ]; encodedText " | "
-                            a [ _href (Urls.movies_details_href elt.Id) ] [ encodedText "Details" ]; encodedText " | "
-                            a [ _href (Urls.movies_delete_href elt.Id)  ] [ encodedText "Delete" ]
+                            a [ _href (Urls.movies_edit elt.Id)    ] [ encodedText "Edit"    ]; encodedText " | "
+                            a [ _href (Urls.movies_details elt.Id) ] [ encodedText "Details" ]; encodedText " | "
+                            a [ _href (Urls.movies_delete elt.Id)  ] [ encodedText "Delete" ]
                         ]
                     ])))
             ]
@@ -424,7 +424,7 @@ module Views =
                     (entry "Rating" model.Rating)
                 )
 
-                form [ _action (Urls.movies_delete_href model.Id); _method "post" ] [
+                form [ _action (Urls.movies_delete model.Id); _method "post" ] [
 
                     TagHelpers.Input.Of(model.Id, [ _type "hidden" ])
                     

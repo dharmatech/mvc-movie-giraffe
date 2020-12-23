@@ -146,7 +146,23 @@ module Urls =
     let movies_edit    = "/Movies/Edit/%i"
     let movies_details = "/Movies/Details/%i"
     let movies_delete  = "/Movies/Details/%i"
-    
+
+type Route<'t> = PrintfFormat<obj, obj, obj, obj, 't>
+
+// type Href<'t> (str : string) = sprintf (Printf.StringFormat<int->string>(str))
+
+let href_str<'t> (str : string) = sprintf (Printf.StringFormat<'t->string>(str))
+
+let Edit    = Route<int> (Urls.movies_edit)
+let Details = Route<int> (Urls.movies_details)
+let Delete  = Route<int> (Urls.movies_delete)
+
+let EditUrl = href_str<int> Urls.movies_edit
+
+// EditFormat
+
+
+
 type String with
     member this.route = PrintfFormat<obj, obj, obj, obj, int>(this)
     member this.href = sprintf (Printf.StringFormat<int->string>(this))
@@ -256,14 +272,10 @@ module Views =
                         td [] [ encodedText elt.Rating ]
 
                         td [] [
-                            // a [ _href ("/Movies/Edit/"    + (string elt.Id)) ] [ encodedText "Edit" ]
-                            // let fmt_b = Printf.StringFormat<int->string>(Urls.movies_edit)
-                            // a [ _href (sprintf fmt_b elt.Id) ] [ encodedText "Edit" ]
-                            // a [ _href (sprintf (Printf.StringFormat<int->string>(Urls.movies_edit)) elt.Id) ] [ encodedText "Edit" ]
-                            a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
                             // a [ _href (Urls.movies_edit.href elt.Id) ] [ encodedText "Edit" ]
+                            // a [ _href (href_str<int>(Urls.movies_edit) elt.Id) ] [ encodedText "Edit" ]
+                            a [ _href (EditUrl elt.Id) ] [ encodedText "Edit" ]
                             encodedText " | "
-                            // a [ _href ("/Movies/Details/" + (string elt.Id)) ] [ encodedText "Details" ]
                             a [ _href (Urls.movies_details.href elt.Id) ] [ encodedText "Details" ]
                             encodedText " | "
                             a [ _href (Urls.movies_delete.href elt.Id) ] [ encodedText "Delete" ]
@@ -641,15 +653,15 @@ let webApp =
             choose [
                 route  Urls.movies               >=> movies_handler
                 route  Urls.movies_create        >=> create_handler                
-                routef Urls.movies_details.route     details_handler
-                routef Urls.movies_edit.route        edit_handler
-                routef Urls.movies_delete.route      delete_handler
+                routef Details                       details_handler
+                routef Edit                          edit_handler
+                routef Delete                        delete_handler
             ]
                 
         POST >=> choose [ 
-            route  Urls.movies_create       >=> post_create_handler
-            routef Urls.movies_edit.route       post_edit_handler
-            routef Urls.movies_delete.route     post_delete_handler
+            route  Urls.movies_create >=> post_create_handler
+            routef Edit                   post_edit_handler
+            routef Delete                 post_delete_handler
         ]
 
         setStatusCode 404 >=> text "Not Found" ]

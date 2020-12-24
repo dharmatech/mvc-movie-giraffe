@@ -453,25 +453,20 @@ let movies_handler : HttpHandler =
             | None -> ""
             | Some str -> str
 
-        let mutable movies = query {
-            for elt in context.Movie do
-                select elt
-        }
+        let movies = context.Movie.Select(fun elt -> elt)
 
-        if not (String.IsNullOrEmpty(searchString)) then
-            movies <- query {
-                for elt in movies do
-                    where (elt.Title.Contains(searchString))
-                    select elt
-            }
-        
-        if not (String.IsNullOrEmpty(movieGenre)) then
-            movies <- query {
-                for elt in movies do
-                    where (elt.Genre = movieGenre)
-                    select elt
-            }        
-                
+        let movies =
+            if String.IsNullOrEmpty(searchString) then
+                movies
+            else
+                movies.Where(fun elt -> elt.Title.Contains(searchString))
+
+        let movies = 
+            if String.IsNullOrEmpty(movieGenre) then
+                movies
+            else
+                movies.Where(fun elt -> elt.Genre = movieGenre)
+                                
         let view = Views.movies {
             Genres = new SelectList(context.Movie
                 .OrderBy(fun elt -> elt.Genre)
